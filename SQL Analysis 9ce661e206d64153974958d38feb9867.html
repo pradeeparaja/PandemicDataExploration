@@ -1,0 +1,755 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>SQL Analysis</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="9ce661e2-06d6-4153-9749-58d38feb9867" class="page sans"><header><h1 class="page-title">SQL Analysis</h1><p class="page-description"></p></header><div class="page-body"><h2 id="9591105a-c3b7-497c-be9b-c59eff7f5e5e" class=""> <mark class="highlight-default"><strong>About  </strong></mark></h2><p id="575911ec-f726-45a9-b62e-8300e6506747" class="">      This project Covid-19 Analysis aims to gain insights into the global and regional impact of the pandemic, examining trends over time, identifying the hotspots, vaccination details, etc., By querying and analyzing relevant data, I aimed to contribute to a better understanding of the virus`s spread and its implications on public health. </p><p id="67b65c86-3109-49c9-8e8c-306366919c4e" class="">The dataset is obtained from the <strong><mark class="highlight-blue"><a href="https://data.who.int/dashboards/covid19/data?n=c">WHO-COVID-19-global-data.csv</a></mark></strong><strong><mark class="highlight-blue"> </mark></strong></p><p id="cc2741d9-935c-4f3e-ae5a-1572f5cf9747" class="">
+</p><h2 id="37d42006-88dd-4480-afed-1e2ecc2387c0" class=""><strong>Purpose </strong></h2><p id="3542bd14-6997-4ffa-928a-b337e2177109" class="">     The major aim of this project is to understand how the virus is spreading, see if our actions to control it are working, and figure out where the resources are needed most. </p><p id="b6950bb3-fbe7-467e-8695-90eac5c443f4" class="">
+</p><h2 id="203e4455-0589-4354-9611-8c47e44330b7" class=""><strong>About the Dataset (Schema)</strong></h2><p id="0673de20-ea7e-471b-9df2-fbbb9e2b6deb" class="">      The dataset is obtained from the <strong><mark class="highlight-blue"><a href="https://data.who.int/dashboards/covid19/data?n=c">WHO-COVID-19-global-data.csv</a></mark></strong><strong><mark class="highlight-blue"> </mark></strong><mark class="highlight-default">and from</mark><mark class="highlight-blue"><strong> K</strong></mark><mark class="highlight-blue"><strong><a href="https://www.kaggle.com/datasets/joebeachcapital/world-population-by-country-2023">aggle-world-population</a></strong></mark><mark class="highlight-blue"><strong>. </strong></mark><mark class="highlight-default">With information about cases, deaths, vaccination details, vaccine types and the populations based on countries.</mark></p><p id="d53e76fc-aad1-4fb2-9514-550e8dd2436d" class="">
+</p><p id="df754608-26d7-44c0-9573-314a08df894b" class=""><span style="border-bottom:0.05em solid"><em>Covid-19 Global dataset</em></span></p><table id="55c2032d-c042-4375-b9c6-ea6f954853eb" class="simple-table"><thead class="simple-table-header"><tr id="fd5bb47a-5201-4685-bdd5-fa55d3360866"><th id="?~bV" class="block-color-orange_background simple-table-header">Column</th><th id="TFFL" class="block-color-orange_background simple-table-header" style="width:283px">Description</th><th id="Rf{{" class="block-color-orange_background simple-table-header">Datatype</th></tr></thead><tbody><tr id="c76445f7-7b29-421f-bd43-153ba5df5f78"><td id="?~bV" class="">Date_reported</td><td id="TFFL" class="" style="width:283px">Daily date on which cases are reported</td><td id="Rf{{" class="">DATE</td></tr><tr id="658c7068-a900-47aa-9f59-8de02ede7317"><td id="?~bV" class="">Country_code</td><td id="TFFL" class="" style="width:283px">Code for standardized identification</td><td id="Rf{{" class="">STRING</td></tr><tr id="69e6dedd-fa67-4271-befa-44903c74f67d"><td id="?~bV" class="">Country</td><td id="TFFL" class="" style="width:283px">Specifies the name of country</td><td id="Rf{{" class="">STRING</td></tr><tr id="8a1d49c0-993f-4ced-b1e5-7a2505e23350"><td id="?~bV" class="">WHO_region</td><td id="TFFL" class="" style="width:283px">WHO region to which the country belongs </td><td id="Rf{{" class="">STRING</td></tr><tr id="363630ed-4dcd-4703-ac4f-1df527fb8e66"><td id="?~bV" class="">Cases</td><td id="TFFL" class="" style="width:283px">Number of cases in a specific country on a given date</td><td id="Rf{{" class="">INTEGER</td></tr><tr id="0168fc19-1d48-4c66-a4f7-c1178df269e3"><td id="?~bV" class="">Deaths</td><td id="TFFL" class="" style="width:283px">Number of Deaths in a specific country on a given date</td><td id="Rf{{" class="">INTEGER</td></tr></tbody></table><p id="c8bf6b60-0b4e-4788-a7d7-d764b1cfd7e5" class=""><span style="border-bottom:0.05em solid"><em>Vaccination-data</em></span></p><table id="e6f73d44-6c5e-43c2-ae6d-2382ed59559a" class="simple-table"><thead class="simple-table-header"><tr id="5ba99131-6f4f-4624-8869-c6c6014b275f"><th id="s;{s" class="block-color-orange_background simple-table-header">Column</th><th id="&gt;oX&gt;" class="block-color-orange_background simple-table-header" style="width:295px">Description</th><th id="b?Ky" class="block-color-orange_background simple-table-header">Datatype</th></tr></thead><tbody><tr id="d479c516-5b0f-43a1-8c90-9a2757528a90"><td id="s;{s" class="">Country</td><td id="&gt;oX&gt;" class="" style="width:295px">Code for standardized identification</td><td id="b?Ky" class="">STRING</td></tr><tr id="0d9149ca-802c-4997-b6c9-a02786600937"><td id="s;{s" class="">ISO3</td><td id="&gt;oX&gt;" class="" style="width:295px">Specifies the name of country</td><td id="b?Ky" class="">STRING</td></tr><tr id="94cd48b1-7e03-4218-bbac-a3af90e08641"><td id="s;{s" class="">WHO_region</td><td id="&gt;oX&gt;" class="" style="width:295px">WHO region to which the country belongs </td><td id="b?Ky" class="">STRING</td></tr><tr id="b28bac7b-2942-4672-a730-30d93ca5851a"><td id="s;{s" class="">Total_Vaccination</td><td id="&gt;oX&gt;" class="" style="width:295px">Total count of vaccinations administered</td><td id="b?Ky" class="">INTERGER</td></tr><tr id="daabd256-edb4-47ee-82bc-ce3ea60648b7"><td id="s;{s" class="">First_Dose</td><td id="&gt;oX&gt;" class="" style="width:295px">People who receiving the initial vaccine dose</td><td id="b?Ky" class="">INTEGER</td></tr><tr id="f159a619-e09c-4a03-b200-7709269af821"><td id="s;{s" class="">Second_Dose</td><td id="&gt;oX&gt;" class="" style="width:295px">People who completed the vaccination series with second dose</td><td id="b?Ky" class="">INTEGER</td></tr><tr id="1f70b480-1e5b-437d-a922-8ed109c015cb"><td id="s;{s" class="">Booster_Dose</td><td id="&gt;oX&gt;" class="" style="width:295px">People who receiving additional booster doses</td><td id="b?Ky" class="">INTEGER</td></tr></tbody></table><p id="ec9d9ee6-c030-4d4f-b5d8-583a37343aa4" class="">
+</p><p id="59fcd776-e5fa-4a33-b403-6753fc610a06" class=""><span style="border-bottom:0.05em solid"><em>Vaccination_type</em></span></p><table id="fc68d3dc-dcf9-4639-8b58-5ca0b508d81b" class="simple-table"><thead class="simple-table-header"><tr id="cba57686-e901-43a3-86a5-999033d641cf"><th id="[HO~" class="block-color-orange_background simple-table-header">Column</th><th id="xwkz" class="block-color-orange_background simple-table-header" style="width:312px">Description</th><th id="ZW|`" class="block-color-orange_background simple-table-header">Datatype</th></tr></thead><tbody><tr id="696e71ea-654d-4ab9-b042-eb394f99754d"><td id="[HO~" class="">ISO3</td><td id="xwkz" class="" style="width:312px">Specifies the name of country</td><td id="ZW|`" class="">STRING</td></tr><tr id="7f7103d3-292d-432a-84a9-88ba2e70f4e2"><td id="[HO~" class="">Product_Name</td><td id="xwkz" class="" style="width:312px">Category of the vaccine product.</td><td id="ZW|`" class="">STRING</td></tr><tr id="667bed2c-3c43-45fb-babb-e4148bae129b"><td id="[HO~" class="">Vaccine_Name</td><td id="xwkz" class="" style="width:312px">Type of the COVID-19 vaccine.</td><td id="ZW|`" class="">STRING</td></tr><tr id="8e636c8d-c6df-444b-9ab0-ad4d7526e127"><td id="[HO~" class="">Company_Name</td><td id="xwkz" class="" style="width:312px">Pharmaceutical or biotech company that produced the COVID-19 vaccine.</td><td id="ZW|`" class="">STRING</td></tr></tbody></table><p id="66ccc03c-bf8f-412f-b3fd-63fd323400f7" class="">
+</p><p id="543f6cf8-9437-4e6f-b257-46f909e43430" class=""><span style="border-bottom:0.05em solid"><em>World-Population</em></span></p><table id="c44217a2-7baf-4fca-8e5a-e9eb00b08944" class="simple-table"><thead class="simple-table-header"><tr id="64523014-31fe-4a05-ac14-6ef7fa717f75"><th id="yHVK" class="block-color-orange_background simple-table-header" style="width:130px">Column</th><th id="psmz" class="block-color-orange_background simple-table-header" style="width:317px">Description</th><th id="pMFW" class="block-color-orange_background simple-table-header">Datatype</th></tr></thead><tbody><tr id="ae9046e4-a7a7-4d38-9e5d-8e4d39bbd238"><td id="yHVK" class="" style="width:130px">Country</td><td id="psmz" class="" style="width:317px">Code for standardized identification</td><td id="pMFW" class="">STRING</td></tr><tr id="231ca4cc-1c1c-4896-859b-9e92ddb98e86"><td id="yHVK" class="" style="width:130px">Population</td><td id="psmz" class="" style="width:317px">Population of the country 2023</td><td id="pMFW" class="">INTEGER</td></tr></tbody></table><h2 id="f159408a-68c0-42e5-a48a-827f239344d9" class="">ER Diagram</h2><figure id="246429a9-b08b-483f-bd08-6e9b14fa224a" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled.png"><img style="width:672px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled.png"/></a></figure><h2 id="32994548-b6d6-4957-afd4-a3b1d8834189" class=""><strong>Data Cleaning</strong></h2><p id="e76d514b-e0c1-4825-a7d4-70b28522bb6c" class="">   Addressing missing data points in the dataset by employing data cleaning techniques. The process involves identifying and handling null values, ensuring data accuracy, and preparing the dataset for further analysis.</p><p id="33186797-be69-40a4-b4af-ff52c520b772" class="">   Tailoring the dataset by eliminating unnecessary or redundant columns. This enhances data clarity and reduces unnecessary information, streamlining the dataset for analysis.</p><p id="8c5ba366-d206-48be-a37b-bd767510b72a" class="">
+</p><h2 id="9c63c520-6d4f-4e94-b5e4-c7712564c300" class=""><strong>Analysis Type</strong></h2><ul id="cfd527c7-e07c-4bc8-84eb-e7480d3c70d7" class="bulleted-list"><li style="list-style-type:disc"><strong>Global COVID Insight Vault</strong></li></ul><p id="124dc3de-9354-45fe-a295-51c15869aef5" class="">        Explore and analyze the global impact of the COVID-19 pandemic.</p><ul id="c6f8aa0b-f2af-42e2-8c74-c2211ec1bac3" class="bulleted-list"><li style="list-style-type:disc"><strong>Vaccine Typology Analysis</strong></li></ul><p id="2521b8d4-447c-4f7d-8684-3eb20ea47215" class="">       Categorize and evaluate COVID-19 vaccines based on their unique characteristics.</p><ul id="1127ba20-6d81-492f-8a87-813985139ba1" class="bulleted-list"><li style="list-style-type:disc"><strong>Vaccine types Analysis</strong></li></ul><p id="bd542f51-ab98-40d6-9eb4-d9128894af06" class="">        Explore the nuances of COVID-19 vaccine formulations and their impact.</p><p id="ace17e93-8c40-4bf4-bfea-feaeec691992" class="">
+</p><h2 id="028b095e-22bb-4f8d-b9b7-70777d3d2cd6" class=""><strong>Query Exploration</strong></h2><p id="2a77108d-0625-401c-9a87-f612b08d0320" class=""><em><strong>Global COVID Insight Vault</strong></em></p><ol type="1" id="70ce8213-f33f-4223-a1dc-3be4c11ce4c8" class="numbered-list" start="1"><li><mark class="highlight-yellow_background">What is the total number of covid-19 cases and deaths globally?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="cff75e37-794a-4cad-8763-8c6133d98861" class="code"><code class="language-SQL">Select sum(New_deaths) as Totatal_deaths, sum(New_cases) as Total_cases
+from `Covid_data_analysis.Global_data`
+</code></pre><figure id="37f6e7cf-fe28-4389-9098-6f0854cb997f" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%201.png"><img style="width:413px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%201.png"/></a></figure><ol type="1" id="a4b679c1-b950-4966-8671-2551e6b7428d" class="numbered-list" start="2"><li><mark class="highlight-yellow_background">How has the pandemic evolved over time?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b956fb65-124b-49a9-9a82-b03fa2fe47ae" class="code"><code class="language-SQL">SELECT EXTRACT(year from date_reported) as Year ,SUM(new_cases) AS total_cases,SUM(new_deaths) AS total_deaths
+FROM `Covid_data_analysis.Global_data`
+GROUP BY Year
+ORDER BY Year;</code></pre><figure id="bcbf7725-bbb2-4ce9-bedb-9dcaa8b98919" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%202.png"><img style="width:528px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%202.png"/></a></figure><ol type="1" id="39a0212e-a39f-4940-9a0f-fb4b2af846ea" class="numbered-list" start="3"><li><mark class="highlight-yellow_background">Which countries have experienced the highest and lowest total covid-19 cases and deaths?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="bb5f3eab-4edc-4222-9f7d-84d465140557" class="code"><code class="language-SQL">WITH CountryTotals AS (
+  SELECT Country, SUM(new_cases) AS Total_cases, SUM(new_deaths) AS Total_deaths
+  FROM `Covid_data_analysis.Global_data`
+  GROUP BY Country
+)
+SELECT Country, Total_Cases, Total_Deaths
+FROM (
+  SELECT Country, Total_cases, Total_deaths,
+  ROW_NUMBER() OVER (ORDER BY Total_cases DESC) AS RowAsc,
+  ROW_NUMBER() OVER (ORDER BY Total_cases ASC) AS RowDesc
+  FROM CountryTotals
+) AS RANkDATA
+WHERE RowDesc &lt;=5 OR RowAsc &lt;= 5;</code></pre><figure id="aacffe13-2149-43ad-89bd-0c6c1d8a635f" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%203.png"><img style="width:528px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%203.png"/></a></figure><ol type="1" id="516b782d-9898-4241-9bef-58d71e549e29" class="numbered-list" start="4"><li><mark class="highlight-yellow_background">What are the daily trends in new cases and deaths?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="fb8e7406-327f-47c6-9b59-c4cac22bdc48" class="code"><code class="language-SQL">WITH dailyTrends As(
+  Select Date_reported, SUM(new_cases) AS Daily_Total_cases, SUM(new_deaths) AS Daily_Total_deaths
+  from `Covid_data_analysis.Global_data`
+  group by Date_reported
+)
+select Date_reported, Daily_Total_cases, Daily_Total_deaths
+from dailyTrends;</code></pre><figure id="f8780954-6582-4f05-9510-8fb4a3e135f2" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%204.png"><img style="width:441px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%204.png"/></a></figure><ol type="1" id="4dda8c5d-b94e-4d97-9391-17aa7f4104e7" class="numbered-list" start="5"><li><mark class="highlight-yellow_background">How does the (Case Fatality Rate) CFR vary between countries?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="603cf60d-0a61-4710-b742-ae6e498dc6a8" class="code"><code class="language-SQL">with CFR as(
+  Select Country, sum(new_cases) as Total_cases, sum(new_deaths) as Total_Deaths
+  from `Covid_data_analysis.Global_data`
+  group by Country
+)
+Select Country, round((Total_deaths/nullif(Total_cases,0)),2)*100 as Fatality_Rate
+from CFR
+order by Fatality_Rate DESC</code></pre><figure id="7dcab3ec-a10d-411a-b611-f3209ab4736f" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%205.png"><img style="width:426px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%205.png"/></a></figure><ol type="1" id="370e07ba-4904-4a2a-881e-3892e3920480" class="numbered-list" start="6"><li><mark class="highlight-yellow_background">What is the death ratio and total covid - 19 cases based on the population?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b0884543-2450-47b4-821f-4aab6a25b86b" class="code"><code class="language-SQL">With DeathRation as (
+  Select distinct GD.country, WP.Population2023, sum(GD.New_deaths) as Total_deaths
+  from `Covid_data_analysis.Global_data` as GD
+  join
+  `Covid_data_analysis.World_population` as WP
+  using(Country)
+  where country is not null
+  group by GD.country, WP.population2023
+)
+Select country,Total_deaths/nullif(population2023,0)*100 as DeathRation 
+from DeathRation
+order by DeathRation DESC</code></pre><figure id="cc595748-5af1-4749-bddf-50a20416cdd3" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%206.png"><img style="width:453px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%206.png"/></a></figure><p id="0c59ac56-aedd-43ca-9d1d-5e71b1fd445c" class="">
+</p><p id="79f7c37a-e217-4f03-b65e-266e14a8244f" class=""><em><strong>Vaccine Typology Analysis</strong></em></p><ol type="1" id="6b3094df-e246-47b8-8ca7-6bd4ed39ae34" class="numbered-list" start="1"><li><mark class="highlight-yellow_background">How has the administration of first doses evolved over time globally?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="36f6fe66-36d5-43a6-bf6f-1810ef7cb8ec" class="code"><code class="language-SQL">Select DATE_UPDATED, Sum(PERSONS_VACCINATED_1PLUS_DOSE) as number_of_1st_dose from `Covid_data_analysis.Vaccination_Data`
+group by DATE_UPDATED;</code></pre><figure id="7f450032-1ac6-4dea-b097-56b1e73bbadd" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%207.png"><img style="width:378px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%207.png"/></a></figure><ol type="1" id="f135b994-2f3c-43ec-a07c-b974155c9185" class="numbered-list" start="2"><li><mark class="highlight-yellow_background">Is there a correlation between the rollout of second doses and the decline in new COVID-19 cases?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a4c17c24-d139-419b-86b5-a9fa7e684984" class="code"><code class="language-SQL">Select v.DATE_UPDATED, sum(g.New_cases) as Totla_cases , sum(v.PERSONS_LAST_DOSE) as number_of_2st_dose  from `Covid_data_analysis.Vaccination_Data`as v
+left join `Covid_data_analysis.Global_data` as g
+on v.DATE_UPDATED = g.Date_reported
+group by v.DATE_UPDATED
+order by DATE_UPDATED</code></pre><figure id="2849f636-e5fc-48c4-9d5f-3dec465f9c74" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%208.png"><img style="width:510px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%208.png"/></a></figure><ol type="1" id="b35a432a-8c56-41b9-84aa-e0507537c903" class="numbered-list" start="3"><li><mark class="highlight-yellow_background">Which countries have achieved the highest vaccination coverage for the first dose?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="c3c06d3d-8025-4cc0-894d-1e77ffda17b9" class="code"><code class="language-SQL">with Vaccination_Coverage as (
+Select COUNTRY, sum(PERSONS_VACCINATED_1PLUS_DOSE) as Number_of_1st_dose
+from 
+`Covid_data_analysis.Vaccination_Data`
+Group by COUNTRY
+)
+Select * ,
+Rank() over(Order by Number_of_1st_dose DESC) as Country_Rank
+from Vaccination_Coverage
+order by Country_Rank</code></pre><figure id="6e4e9b14-ba00-418f-87ca-ecd4484a0b0b" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%209.png"><img style="width:533px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%209.png"/></a></figure><ol type="1" id="f2afb460-d038-4cb5-836b-59e482a55645" class="numbered-list" start="4"><li><mark class="highlight-yellow_background">Are there disparities in the distribution of booster doses among different countries?</mark></li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="72de5c70-8c72-4423-ae43-5eb5d6d79cbb" class="code"><code class="language-SQL">WITH Booster_Dose_Coverage AS (
+SELECT COUNTRY,
+Sum(PERSONS_BOOSTER_ADD_DOSE) as Number_of_Booster_doses   
+FROM `Covid_data_analysis.Vaccination_Data`
+GROUP BY COUNTRY
+)
+SELECT*,
+    RANK() OVER (ORDER BY Number_of_Booster_doses DESC) AS Country_Booster_Rank
+FROM Booster_Dose_Coverage
+order by Country_Booster_Rank;</code></pre><figure id="71ffb074-06da-4fa9-b60b-1bae14764b56" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%2010.png"><img style="width:589px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%2010.png"/></a></figure><p id="483cfc13-8ad2-43e8-8d36-f8473b574577" class="">
+</p><p id="147a7251-6197-4d3e-91d3-8d74d00f65b4" class=""><em><strong>Vaccine types Analysis</strong></em></p><ol type="1" id="5b190df1-3b48-4609-ad10-2d9a436c14ad" class="numbered-list" start="1"><li><mark class="highlight-yellow_background">Which companies are the major contributors to the production of COVID-19 vaccines?</mark></li></ol><p id="5beb67d0-ded6-4b03-9e82-42e387287210" class=""> </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8ae1961e-9f4a-428d-a0e1-6f4ba5a65690" class="code"><code class="language-SQL">Select COMPANY_NAME,  count(Vaccine_Name) as Total_vaccines
+from `Covid_data_analysis.Vaccine_Type`
+group by COMPANY_NAME
+order by Total_vaccines DESC</code></pre><figure id="86d5fec3-f62e-4ffc-be35-2ebeb7dca267" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%2011.png"><img style="width:399px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%2011.png"/></a></figure><p id="30f6c3f1-e124-4611-9cea-f51898cf3525" class="">
+</p><ol type="1" id="4f97ffb1-de50-417b-a33f-9c3b4580de8e" class="numbered-list" start="2"><li>How many unique vaccine products are available?</li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="167d2b1a-315d-457d-b83f-624b84f0a29b" class="code"><code class="language-SQL">Select count(Distinct PRODUCT_NAME) as Unique_Products
+from `Covid_data_analysis.Vaccine_Type`</code></pre><figure id="e46d9966-1267-4d1b-80b5-d429374d4d4c" class="image"><a href="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%2012.png"><img style="width:321px" src="SQL%20Analysis%209ce661e206d64153974958d38feb9867/Untitled%2012.png"/></a></figure><h2 id="c3aaed34-3dd8-4c62-bfba-918022da947c" class=""><strong><strong><strong>Conclusion </strong></strong></strong></h2><p id="a8d31768-2f51-4df0-bb2d-11cdc565d851" class="">The comprehensive analysis of the global COVID-19 landscape reveals significant insights. Total cases and deaths globally have been thoroughly examined, shedding light on the magnitude of the pandemic. The evolution of the virus over time demonstrates varying trends, with distinct patterns emerging in different regions. Country-wise comparisons highlight hotspots and areas with both high and low COVID-19 impact. Daily trends provide real-time perspectives, while the Case Fatality Rate offers a measure of severity across nations. Assessing death ratios based on population underscores the varying impact on different countries.</p><p id="f83cc0dd-16e9-4b35-901c-677c573e3543" class="">Turning to vaccine typology, the analysis delves into the evolution of first doses administered globally, identifying potential correlations between the rollout of second doses and declines in new cases. Vaccination coverage is scrutinized to recognize countries achieving significant milestones, while an investigation into booster dose distribution reveals potential disparities among nations.</p><p id="bf6c28b6-432c-412d-bb04-e7758d521c2f" class="">Finally, the analysis of vaccine types elucidates major contributors to vaccine production and emphasizes the diversity of available vaccine products. The overall project serves its primary purpose of contributing to a deeper understanding of the global and regional implications of the pandemic, aiding in informed decision-making and resource allocation for effective public health interventions.</p><p id="79b1e665-dc9c-45bc-a5bb-378cc31af3b7" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
