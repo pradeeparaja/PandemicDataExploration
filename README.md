@@ -1,6 +1,5 @@
-# SQL_Project1
+# PandemicDataExploration
 Covid-19 Analysis using SQL
-# COVID-19 Analysis Project
 
 ## Overview
 
